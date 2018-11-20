@@ -76,15 +76,223 @@
 \setlength{\parskip}{0pt}
 
 \newpage
-\section{Aaaa}
+\section{Úvod}
 
-Aaaa~\cite{X}.
+Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku spočíval v odhalení všetkých tajomstiev ktoré boli poukrývané na rôznych miestach. Nasledujúce kapitoly popisujú proces hľadania jednotlivých tajomstiev po pripojení pomocou privátneho kľúča na \textit{bis.fit.vutbr.cz}.
 
-\newpage
-\section{Literatúra}
-\bibliographystyle{slovakiso}
-\begin{flushleft}
-    \bibliography{quotation}
-\end{flushleft}
+\section{Tajomstvá}
+
+\begin{tabular}{r|l}
+    Kapitola \ref{sec:C} & \footnotesize{\texttt{C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}} \\
+    Kapitola \ref{sec:E} & \footnotesize{\texttt{E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}} \\
+    Kapitola \ref{sec:F} & \footnotesize{\texttt{F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}} \\
+    Kapitola \ref{sec:I} & \footnotesize{\texttt{I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}} \\
+\end{tabular}
+
+\section{Analýza}\label{sec:analysis}
+
+Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr prezrel \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Odhalil som v priečinku \texttt{.Trash} privátny kľúč používateľa \textit{itcrowd}. Následne na to, som si zistil IP adresu zariadenia pomocou \uv{\texttt{ip addr}}. IP adresa zariadenia: \texttt{192.168.122.6}, maska siete: \texttt{255.255.255.0}. Zanalyzoval som si sieť v ktorej sa nachádza toto zariadenie pomocou \uv{\texttt{nmap 192.168.122.6/24 -Pn}}. Vo výstupe som spozoroval \textit{ptest}, tak na základe tohto, som spustil príkaz \uv{\texttt{nmap 192.168.122.6/24 -Pn grep -A 6 "ptest"}}. Získal som nasledujúci výsledok:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+Nmap scan report for ptest1.bis.mil (192.168.122.143)
+Host is up (0.00072s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE
+21/tcp open  ftp
+22/tcp open  ssh
+
+Nmap scan report for ptest2.bis.mil (192.168.122.27)
+Host is up (0.00049s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+3306/tcp open  mysql
+
+Nmap scan report for ptest3.bis.mil (192.168.122.22)
+Host is up (0.00062s latency).
+Not shown: 997 closed ports
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+111/tcp open  rpcbind
+
+Nmap scan report for ptest4.bis.mil (192.168.122.210)
+Host is up (0.0016s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+53/tcp   open  domain
+6667/tcp open  irc
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Z týchto poznatkov som zvážil, že by som sa pomocou odhaleného kľúča vedel pripojiť na jeden z hore uvedených zariadení. Popis pripojenia pomocou tohto privátneho kľuča pokračuje v kapitole \ref{sec:C}.
+
+\section{Tajomstvo \textit{C}}\label{sec:C}
+
+S využitím privátneho kľúča v priečinku \texttt{\$HOME/.Trash/itcrowd.key} pre používateľa \textit{itcrowd} nachadzájúceho sa na \textit{bis.fit.vutbr.cz} som sa pripojil na zariadenie \texttt{ptest3} pomocou príkazu \uv{\texttt{ssh -i .Trash/itcrowd.key -l itcrowd ptest3}}.\\
+
+Po úspešnom pripojení som si znovu preskúmal \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}} ale nič som nenašiel. Keďže na \textit{ptest3} je otvorený port \textit{http}, tak som vykonal \uv{\texttt{cd /var/www/html \&\& ls -R -A .}}. Spozoroval som súbor \texttt{/var/www/html/secret.txt} ktorého obsah som si následne chcel vypísať pomocou \uv{\texttt{cat secret.txt}}. Výpis nebol možný z dôvodu nedostatočných práv, t.j. \textit{cat: /var/www/html/secret.txt: Permission denied}. Port \textit{http} bol ale otvorený, tak som skúsil zda sa ten súbor neviem stiahnuť pomocou \uv{\texttt{curl http://ptest3/secret.txt}}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}}
+\end{center}
+
+\section{Tajomstvo \textit{I}}\label{sec:I}
+
+Tajomstvo \textit{I} som získal pokračovaním v analýze priečinka \texttt{/var/www/html} po odhalení tajomstva \textit{C} ktoré je popísané v kapitole \ref{sec:C}. Pri vypísaní obsahu súbora \texttt{/var/www/html/robots.txt} pomocou \uv{\texttt{cat /var/www/html/robots.txt}} som získal tajomstvo \textit{I}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}}
+\end{center}
+
+\section{Tajomstvo \textit{E}}\label{sec:E}
+
+Pri pripojení na zariadenie \texttt{ptest3} pomocou príkazu \uv{\texttt{ssh -i .Trash/itcrowd.key -l itcrowd ptest3}} sa zobrazila uvítacia správa ktorá obsahova \textit{Riddle of the day}:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+===== Riddle of the day =====
+|>Qefkdp xob klq xitxvp texq qebv pbbj; qeb cfopq xmmbxoxkzb abzbfsbp jxkv;
+qeb fkqbiifdbkzblc x cbt mbozbfsbp texq exp ybbk zxobcriiv efaabk.<|
+|>Ql zixfj vlro mofwb ork zljjxka: ofaaib bppbkqfxifqfbp<|
+=============================
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Zistil som, že sa jedná o Caesarovau šifru s pousnutím o 23. Dekódovaná správa vyzerala následovne:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+===== Riddle of the day =====
+|>Things are not always what they seem the first appearance deceives many;
+the intelligence of a few perceives what has been carefully hidden.<|
+|>To claim your prize run command: riddle essentialities<|
+=============================
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Po vykonaní príkazu \uv{\texttt{riddle essentialities}} som získal tajomstvo \textit{E}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}}
+\end{center}
+
+\section{Tajomstvo \textit{F}}\label{sec:F}
+
+Všimol som si po analýze siete ktorá je popísaná v kapitole \ref{sec:analysis}, že na \textit{ptest4} beží \texttt{irc} na porte \texttt{6667}. Spustil som si IRC client pomocou \uv{\texttt{irssi}} a následne som sa napojil na \textit{ptest4} pomocou \uv{\texttt{/connect ptest4}}. Vypísal som si zoznam kanálov (channels) pomocou \uv{\texttt{/list}}.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+20:20 -!- Channel Users  Name
+20:20 -!- #bis 1
+20:20 -!- &SERVER 0 Server Messages
+20:20 -!- #anonbox 0 Post all your ideas, complaints and everyday issues.
+20:20 -!- #itcrowd 0 All IT issues to be discussed here.
+20:20 -!- #meetings 0 In this channel you can find transcripts of the meetings.
+20:20 -!- #finances 0 Channel for accountants and all monetary operations.
+20:20 -!- #internal 1 Internal affairs.
+20:20 -!- #general 0 Feel free discuss various topics in here.
+20:20 -!- End of LIST
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Všimol som si že na kanále \texttt{\#bis} sa nachádza 1 user (používateľ). Pripojil som sa na kanál \texttt{\#bis} a vypísal som si mená na tomto kanály pomocou \uv{\texttt{/names}}.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+20:26 [Users #bis]
+20:26 [@Willie] [ student]
+20:26 -!- Irssi: #bis: Total of 2 nicks [1 ops, 0 halfops, 0 voices, 1 normal]
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Zistil som že \texttt{@Willie} je bot z {\color{blue}\href{https://github.com/mikeywaites/willie}{github.com/mikeywaites/willie}} a má reagovať na určité príkazy začínajúce s bodkou. Zadal som príkaz \uv{\texttt{.commands}} na ktorý mi bot reagoval:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+20:49 <@Willie> student: I am sending you a private message of all my commands!
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Otvoril som si privátny chat s botom kde mi \texttt{@Willie} poslal všetky príkazy:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[language={}, basicstyle=\footnotesize]
+20:49 <Willie> Commands I recognise: CUKOO, action, addtrace, addtraceback, agreed,
+announce, ask, at, ban, bitcoin, blocks, btc, c, calc, ch, chairs, choice, choose,
+commands, comment, comments, countdown, cukoo, cur, currency, d, ddg, define, deop,
+devoice, dice, dict, distance, duck, endmeeting, ety, exchange, findbug, findissue,
+g, getchanneltimeformat, getchanneltz, getctf, getctz, getsafeforwork, getsfw,
+
+20:49 <Willie> gettf, gettimeformat, gettimezone, gettz, gify, gtfy, help, imdb,
+in, info, ip, iplookup, isup, join, kb, kick, kickban, length, link, listactions,
+lmgify, lmgtfy, load, makebug, makeissue, mangle, mangle2, mass, me, mode, movie,
+msg, op, part, py, quiet, quit, radio, rand, redditor, reload, roll, rss, safety,
+save, search, seen, set, setchanneltimeformat, setchanneltz, setctf, setctz,
+
+20:49 <Willie> setlocation, setsafeforwork, setsfw, settf, settimeformat,
+settimezone, settz, setwoeid, showmask, spell, spellcheck, startmeeting, subject,
+suggest, t, tell, temp, time, title, tld, tmask, topic, tr, translate, u, unban,
+unquiet, update, uptime, version, voice, w, wa, wea, weather, weight, wik, wiki,
+wolfram, wt, xkcd.
+
+20:49 <Willie> For help, do 'Willie: help example' where example is the name of
+the command you want help for.
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Ukončil som privátny chat pomocou príkazu \uv{\texttt{/q}} aby som sa vrátil naspať do kanála \texttt{\#bis}. Napísal som príkaz \uv{\texttt{.CUKOO}} na ktorý mi ale bot nereagoval, vyskúšal som \uv{\texttt{.help CUKOO}} na čo reagoval:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+20:56 <@Willie> student: I might spoil you a secret.
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Znovu som si otvoril privátny chat s botom kde som vyskúšal \uv{\texttt{.CUKOO}} na čo bot reagoval správou:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+21:13 <Willie> Ziskali jste tajemstvi
+F_18-11-22-13-01_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62
+
+21:13 <Willie> Ziskali jste tajemstvi
+F_18-11-22-13-01_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+V správe som získal tajomstvo \textit{F}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}}
+\end{center}
+
+%\newpage
+%\section{Literatúra}
+%\bibliographystyle{slovakiso}
+%\begin{flushleft}
+%    \bibliography{quotation}
+%\end{flushleft}
 
 \end{document}
