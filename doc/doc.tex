@@ -83,10 +83,16 @@ Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku
 \section{Tajomstvá}
 
 \begin{tabular}{r|l}
+    Kapitola \ref{sec:A} & \footnotesize{\texttt{A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}} \\
+    Kapitola \ref{sec:B} & \footnotesize{\texttt{B}} \\
     Kapitola \ref{sec:C} & \footnotesize{\texttt{C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}} \\
+    Kapitola \ref{sec:D} & \footnotesize{\texttt{D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}} \\
     Kapitola \ref{sec:E} & \footnotesize{\texttt{E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}} \\
     Kapitola \ref{sec:F} & \footnotesize{\texttt{F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}} \\
+    Kapitola \ref{sec:G} & \footnotesize{\texttt{G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}} \\
+    Kapitola \ref{sec:H} & \footnotesize{\texttt{H\_20-11-21-32-01\_e611160adcc74100c8739ad2525739abda3bdc39e471efdb5b27a01a32d0c32c}} \\
     Kapitola \ref{sec:I} & \footnotesize{\texttt{I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}} \\
+    Kapitola \ref{sec:J} & \footnotesize{\texttt{J}} \\
 \end{tabular}
 
 \section{Analýza}\label{sec:analysis}
@@ -287,6 +293,43 @@ V správe som získal tajomstvo \textit{F}.
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}}
 \end{center}
+
+\section{Tajomstvo \textit{D}}\label{sec:D}
+
+Keďže na \textit{ptest4} je otvorený port 53, vyskúšal som dotazovanie nie skutočného DNS servera - 192.168.122.1, ale DNS servera \textit{ptest4} - \texttt{192.168.122.210} pomocou \texttt{dig}. Pomocou príkazu \uv{\texttt{dig @192.168.122.210 ptest4.bis.mil. ANY}} som zistil NS záznam pre \texttt{ptest4.bis.mil} t.j. \texttt{bis.mil.} bol NS pre \texttt{ptest4.bis.mil}. Následne som znovu poslal dotaz na \textit{ptest4} pomocou \uv{\texttt{dig @192.168.122.210 bis.mil ANY}}. Odhalil som, ze tajomstvo sa nachádza v TXT zázname. Poslal som dotaz \uv{\texttt{dig @192.168.122.210 bis.mil TXT}} ktorý mi vypísal tajomstvo \textit{D}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}}
+\end{center}
+
+\section{Tajomstvo \textit{G}}\label{sec:G}
+
+Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez správneho prihlasovacieho mena a hesla ma to nechcelo pripojiť. FTP server obsahoval backdoor ktorý fungoval tak, že ak som do prihlasovacieho mena vložili podreťazec \uv{\textit{:)}} reprezentujúci smajlík a náhodné heslo. Výsledkom bola odpoveď \uv{\texttt{220 Opened port 50331, take a look ;)}} ktorú som využil tak, že som sa znovu pripojil pomocou príkazu \uv{\texttt{ftp 192.168.122.143 56530}}. Odhalil som tajomstvo \textit{G}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}}
+\end{center}
+
+\section{Tajomstvo \textit{A}}\label{sec:A}
+
+V priečinku \texttt{\$HOME/Documents} sa nachádzali 4 súbory. V jednom z nich - \texttt{\path{$HOME/Documents/tc48-2008-024-Rev4.pdf}} som našiel využiteľnú informáciu - \uv{\textit{Jen Barber, jbarber@ptest1.bis.mil}}, ktorú som odhalil tak, že dostupné zariadenia pri analýze siete (viz kapitola \ref{sec:analysis}) obsahovali reťazec \textit{ptest} a tento email obsahoval slovo \textit{ptest}. Na \textit{ptest1} bol otvorený SSH port tak som sa pokúsil pripojiť pomocou príkazu \uv{\texttt{ssh jbarber@ptest1.bis.mil}} ktoré ale vyžadovalo heslo. Heslo som pomocou metódy brute force a pomocou 50 najčastejších hesiel hneď odhalil - \uv{\texttt{welcome}}. Pripojil som sa ako \textit{jbarber} s heslom \textit{welcome}. Po pripojení som začal analyzovať obsah \texttt{\$HOME} priečinka a následne som prezrel obsah \texttt{/etc/passwd} a \texttt{/etc/shadow}. Tajomstvo \textit{A} sa nachádzalo v \texttt{/etc/passwd} (v poli pre heslo).
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}}
+\end{center}
+
+\section{Tajomstvo \textit{H}}\label{sec:H}
+
+Analýzou priečinka \texttt{\$HOME} po pripojení na \textit{ptest1} (pripojenie na \textit{ptest1} je popísane v kapitole \ref{sec:A}) som odhalil tajomstvo \textit{H} v jednom zo súborov v podpriečinku \texttt{\$HOME}. Tajomstvo \textit{H} sa nachádzalo v súbore \texttt{\$HOME/Mail/Trash} ktoré som získal pomocou \uv{\texttt{cat \$HOME/Mail/Trash}}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi H\_20-11-21-32-01\_e611160adcc74100c8739ad2525739abda3bdc39e471efdb5b27a01a32d0c32c}}
+\end{center}
+
+\section{Tajomstvo \textit{J}}\label{sec:J}
+
+\section{Tajomstvo \textit{B}}\label{sec:B}
+
 
 %\newpage
 %\section{Literatúra}
