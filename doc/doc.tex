@@ -92,8 +92,12 @@ Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku
     Kapitola \ref{sec:G} & \footnotesize{\texttt{G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}} \\
     Kapitola \ref{sec:H} & \footnotesize{\texttt{H\_20-11-21-32-01\_e611160adcc74100c8739ad2525739abda3bdc39e471efdb5b27a01a32d0c32c}} \\
     Kapitola \ref{sec:I} & \footnotesize{\texttt{I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}} \\
-    Kapitola \ref{sec:J} & \footnotesize{\texttt{J}} \\
+    Kapitola \ref{sec:J} & \footnotesize{\texttt{J\_20-11-22-38-01\_2a87a2c2ad810dfd8d839eae1216c65732cb84a896b730c4ed77c3be966f790f}} \\
 \end{tabular}
+
+\hfill\\
+
+Jednotlivé kapitoly popisujúce odhalené tajomstvá sú usporiadané do poradia na základe podľa odhalení.
 
 \section{Analýza}\label{sec:analysis}
 
@@ -101,7 +105,7 @@ Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr prezrel \texttt{\$HOM
 
 \begin{center}
 \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\footnotesize]
+\begin{lstlisting}[basicstyle=\small]
 Nmap scan report for ptest1.bis.mil (192.168.122.143)
 Host is up (0.00072s latency).
 Not shown: 998 closed ports
@@ -116,7 +120,13 @@ PORT     STATE SERVICE
 22/tcp   open  ssh
 80/tcp   open  http
 3306/tcp open  mysql
+\end{lstlisting}
+\end{tabular}
+\end{center}
 
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\small]
 Nmap scan report for ptest3.bis.mil (192.168.122.22)
 Host is up (0.00062s latency).
 Not shown: 997 closed ports
@@ -136,13 +146,13 @@ PORT     STATE SERVICE
 \end{tabular}
 \end{center}
 
-Z týchto poznatkov som zvážil, že by som sa pomocou odhaleného kľúča vedel pripojiť na jeden z hore uvedených zariadení. Popis pripojenia pomocou tohto privátneho kľuča pokračuje v kapitole \ref{sec:C}.
+Z týchto poznatkov som zvážil, že by som sa pomocou odhaleného kľúča mohol vedieť pripojiť na jeden z hore uvedených zariadení. Popis pripojenia pomocou tohto privátneho kľuča pokračuje v kapitole \ref{sec:C}.
 
 \section{Tajomstvo \textit{C}}\label{sec:C}
 
 S využitím privátneho kľúča v priečinku \texttt{\$HOME/.Trash/itcrowd.key} pre používateľa \textit{itcrowd} nachadzájúceho sa na \textit{bis.fit.vutbr.cz} som sa pripojil na zariadenie \texttt{ptest3} pomocou príkazu \uv{\texttt{ssh -i .Trash/itcrowd.key -l itcrowd ptest3}}.\\
 
-Po úspešnom pripojení som si znovu preskúmal \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}} ale nič som nenašiel. Keďže na \textit{ptest3} je otvorený port \textit{http}, tak som vykonal \uv{\texttt{cd /var/www/html \&\& ls -R -A .}}. Spozoroval som súbor \texttt{/var/www/html/secret.txt} ktorého obsah som si následne chcel vypísať pomocou \uv{\texttt{cat secret.txt}}. Výpis nebol možný z dôvodu nedostatočných práv, t.j. \textit{cat: /var/www/html/secret.txt: Permission denied}. Port \textit{http} bol ale otvorený, tak som skúsil zda sa ten súbor neviem stiahnuť pomocou \uv{\texttt{curl http://ptest3/secret.txt}}.
+Po úspešnom pripojení som si znovu preskúmal \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Keďže na \textit{ptest3} je otvorený port \textit{http}, tak som vykonal \uv{\texttt{cd /var/www/html \&\& ls -R -A .}}. Spozoroval som súbor \texttt{/var/www/html/secret.txt} ktorého obsah som si následne chcel vypísať pomocou \uv{\texttt{cat secret.txt}}. Výpis nebol možný z dôvodu nedostatočných práv, t.j. \textit{cat: /var/www/html/secret.txt: Permission denied}. Port \textit{http} bol ale otvorený, tak som skúsil zda sa ten súbor neviem stiahnuť pomocou \uv{\texttt{curl http://ptest3/secret.txt}}.
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}}
@@ -328,7 +338,31 @@ Analýzou priečinka \texttt{\$HOME} po pripojení na \textit{ptest1} (pripojeni
 
 \section{Tajomstvo \textit{J}}\label{sec:J}
 
+Pri analýze priečinka \texttt{\$HOME} ktorý je spomenutý v kapitole \ref{sec:C} som odhalil v priečinku \texttt{.ssh} rôzne kľúče. Pomocou \uv{\texttt{cat .ssh/config}} som zistil, že používateľ \textit{webmaster} má prístup na \textit{ptest2.bis.mil}. Vyskúšal som sa pripojiť na \textit{ptest2} ako \textit{webmaster} pomocou \uv{\texttt{ssh webmaster@ptest2.bis.mil}}. Prihlásnie prebehlo úspešne. Analýzou spomenutej v kapitole \ref{sec:analysis} som vedel že tu je otvorený port pre HTTP a MySQL. Zanalyzoval som priečinky zariadenia, hlavne \texttt{/var/www/html} kde som našiel rôzne súbory. Po dôkladnejšom preskúmaní som odhalil prihlasovacie údaje do databázy v súbore \texttt{libs/constants.php} pomocou \uv{\texttt{cat libs/constants.php}}.
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+define('DB_DRIVER', 'mysql');
+define('DB_HOST', 'localhost');
+define('DB_HOST_USERNAME', 'arcturus');
+define('DB_HOST_PASSWORD', '16431879196842');
+define('DB_DATABASE', 'arcturus');
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+ Pripojil som sa do databázy pomocou \uv{\texttt{mysql -u arcturus -p16431879196842}}. Zanalyzoval som obsah databázy príkazmy \uv{\texttt{use <DB>;}} a \uv{\texttt{select * from <table>}}. Databáza \texttt{arcturus} obsahovala tabuľku \texttt{contracts} ktorá obsahovala tajomstvo \textit{J}.
+
+\begin{center}
+\small{\texttt{J\_20-11-22-38-01\_2a87a2c2ad810dfd8d839eae1216c65732cb84a896b730c4ed77c3be966f790f}}
+\end{center}
+
+
 \section{Tajomstvo \textit{B}}\label{sec:B}
+
+
+
 
 
 %\newpage
