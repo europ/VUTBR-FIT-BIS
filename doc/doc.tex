@@ -84,7 +84,7 @@ Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku
 
 \begin{tabular}{r|l}
     Kapitola \ref{sec:A} & \footnotesize{\texttt{A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}} \\
-    Kapitola \ref{sec:B} & \footnotesize{\texttt{B}} \\
+    Kapitola \ref{sec:B} & \footnotesize{\texttt{B\_21-11-22-59-01\_fd5e5384449c8f7210aeae754d02913a70e3b0cc52e933ab18dec768a6c346b0}} \\
     Kapitola \ref{sec:C} & \footnotesize{\texttt{C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}} \\
     Kapitola \ref{sec:D} & \footnotesize{\texttt{D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}} \\
     Kapitola \ref{sec:E} & \footnotesize{\texttt{E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}} \\
@@ -322,7 +322,7 @@ Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez s
 
 \section{Tajomstvo \textit{A}}\label{sec:A}
 
-V priečinku \texttt{\$HOME/Documents} sa nachádzali 4 súbory. V jednom z nich - \texttt{\path{$HOME/Documents/tc48-2008-024-Rev4.pdf}} som našiel využiteľnú informáciu - \uv{\textit{Jen Barber, jbarber@ptest1.bis.mil}}, ktorú som odhalil tak, že dostupné zariadenia pri analýze siete (viz kapitola \ref{sec:analysis}) obsahovali reťazec \textit{ptest} a tento email obsahoval slovo \textit{ptest}. Na \textit{ptest1} bol otvorený SSH port tak som sa pokúsil pripojiť pomocou príkazu \uv{\texttt{ssh jbarber@ptest1.bis.mil}} ktoré ale vyžadovalo heslo. Heslo som pomocou metódy brute force a pomocou 50 najčastejších hesiel hneď odhalil - \uv{\texttt{welcome}}. Pripojil som sa ako \textit{jbarber} s heslom \textit{welcome}. Po pripojení som začal analyzovať obsah \texttt{\$HOME} priečinka a následne som prezrel obsah \texttt{/etc/passwd} a \texttt{/etc/shadow}. Tajomstvo \textit{A} sa nachádzalo v \texttt{/etc/passwd} (v poli pre heslo).
+V priečinku \texttt{\$HOME/Documents} sa nachádzali 4 súbory. V jednom z nich - \texttt{\path{$HOME/Documents/tc48-2008-024-Rev4.pdf}} som našiel využiteľnú informáciu - \uv{\textit{Jen Barber, jbarber@ptest1.bis.mil}}, ktorú som odhalil tak, že dostupné zariadenia pri analýze siete (viz kapitola \ref{sec:analysis}) obsahovali reťazec \textit{ptest} a tento email obsahoval slovo \textit{ptest}. Na \textit{ptest1} bol otvorený SSH port tak som sa pokúsil pripojiť pomocou príkazu \uv{\texttt{ssh jbarber@ptest1.bis.mil}} ktoré ale vyžadovalo heslo. Heslo som pomocou metódy brute force a pomocou 50 najčastejších hesiel hneď odhalil - \uv{\texttt{welcome}}. Pripojil som sa ako \textit{jbarber} s heslom \textit{welcome}. Po pripojení som začal analyzovať obsah \texttt{\$HOME} priečinka a následne som prezrel obsah \texttt{/etc/passwd} a \texttt{/etc/shadow}. Tajomstvo \textit{A} sa nachádzalo v \texttt{/etc/shadow} (v poli pre heslo).
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}}
@@ -361,9 +361,54 @@ define('DB_DATABASE', 'arcturus');
 
 \section{Tajomstvo \textit{B}}\label{sec:B}
 
+Pokračovaním analýzi prečinka \texttt{/var/www/html} na \textit{ptest2} (pripojenie na \textit{ptest2} je popísané v kapitole \ref{sec:J}) som odhalil implementačnú zraniteľnosť.
+Pomocou príkazu \uv{\texttt{cat index.php}} som odhalil zraniteľnosť v zdrojovom kóde:
 
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+/* TODO: DEVELOPMENT ONLY, REMOVE IN PRODUCTION!!!
+ *
+ * Prints out value of a variable specified by GET parameter debug_variable
+ */
+if (isset($_GET['debug_variable'])) {
+  var_dump(${$_GET['debug_variable']});
+};
+\end{lstlisting}
+\end{tabular}
+\end{center}
 
+Na základe tejto zraniteľnosti ktorá bola dokonca i popísaná som sa snažil nájsť nejakú premennú ktorú by sa dalo vypísať pomocou tejto zraniteľnosti. Po ďalšej analýze ostatných zdrojových kódov ma zaujal súbor \texttt{internal-memo.php}. Pomocou príkazu \uv{\texttt{cat internal-memo.php}} som odhalil:
 
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+<?php echo $GLOBALS['INTERNAL_MSG']; ?>
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Teraz som potreboval preniesť túto premennú do odhaleného zranitelného miesta. Dotaz \uv{\texttt{curl http://\\ptest2/index.php}} nefungoval, ale po správnom dotaze pomocou \uv{\texttt{curl http://ptest2/index.php?\\debug\_variable=INTERNAL\_MSG}} som si premennú ypísal:
+
+\begin{center}
+\begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\footnotesize]
+string(104) "Ziskali jste tajemstvi
+B_21-11-22-59-01_fd5e5384449c8f7210aeae754d02913a70e3b0cc52e933ab18dec768a6c346b0"
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Project Arcturus Home - Project Arcturus</title>
+...
+\end{lstlisting}
+\end{tabular}
+\end{center}
+
+Odhalil som tajomstvo \textit{B}.
+
+\begin{center}
+\small{\texttt{Ziskali jste tajemstvi B\_21-11-22-59-01\_fd5e5384449c8f7210aeae754d02913a70e3b0cc52e933ab18dec768a6c346b0}}
+\end{center}
 
 %\newpage
 %\section{Literatúra}
