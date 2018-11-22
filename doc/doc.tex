@@ -97,11 +97,11 @@ Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku
 
 \hfill\\
 
-Jednotlivé kapitoly popisujúce odhalené tajomstvá sú usporiadané do kapitol na základe poradia odhalenia.
+Jednotlivé kapitoly popisujúce odhalené tajomstvá sú usporiadané do kapitol na základe poradia odhalenia jednotlivých tajomstiev.
 
 \section{Analýza}\label{sec:analysis}
 
-Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr prezrel \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Odhalil som v priečinku \texttt{.Trash} privátny kľúč používateľa \textit{itcrowd}. Následne na to, som si zistil IP adresu zariadenia pomocou \uv{\texttt{ip addr}}. IP adresa zariadenia: \texttt{192.168.122.6}, maska siete: \texttt{255.255.255.0}. Zanalyzoval som si sieť v ktorej sa nachádza toto zariadenie pomocou \uv{\texttt{nmap 192.168.122.6/24 -Pn}}. Vo výstupe som spozoroval \textit{ptest}, tak na základe tohto, som spustil príkaz \uv{\texttt{nmap 192.168.122.6/24 -Pn grep -A 6 "ptest"}}. Získal som nasledujúci výsledok:
+Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr prezrel \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Odhalil som v priečinku \texttt{.Trash} privátny kľúč používateľa \textit{itcrowd}. Následne na to, som si zistil IP adresu zariadenia pomocou \uv{\texttt{ip addr}}. IP adresa zariadenia: \texttt{192.168.122.6}, maska siete: \texttt{255.255.255.0}. Zanalyzoval som si sieť v ktorej sa nachádza toto zariadenie pomocou \uv{\texttt{nmap 192.168.122.6/24 -Pn}}. Vo výstupe som spozoroval \textit{ptest}, tak na základe tohto, som spustil príkaz \uv{\texttt{nmap 192.168.122.6/24 -Pn | grep -A 6 "ptest"}}. Získal som nasledujúci výsledok:
 
 \begin{center}
 \begin{tabular}{c}
@@ -284,7 +284,7 @@ the command you want help for.
 \end{tabular}
 \end{center}
 
-Ukončil som privátny chat pomocou príkazu \uv{\texttt{/q}} aby som sa vrátil naspať do kanála \texttt{\#bis}. Napísal som príkaz \uv{\texttt{.CUKOO}} na ktorý mi ale bot nereagoval, vyskúšal som \uv{\texttt{.help CUKOO}} na čo reagoval:
+Ukončil som privátny chat pomocou príkazu \uv{\texttt{/q}} aby som sa vrátil naspať do kanála \texttt{\#bis}. Napísal som príkaz \uv{\texttt{.CUKOO}} (podozrivý príkaz pretože nepatrí medzi bežné príkazy bota) na ktorý mi ale bot nereagoval, vyskúšal som \uv{\texttt{.help CUKOO}} na čo reagoval:
 
 \begin{center}
 \begin{tabular}{c}
