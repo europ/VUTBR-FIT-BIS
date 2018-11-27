@@ -162,7 +162,7 @@ cat: /var/www/html/secret.txt: Permission denied
 \end{tabular}
 \end{center}
 
-Port \textit{http} bol ale otvorený, tak som skúsil zda sa ten súbor neviem stiahnuť pomocou \uv{\texttt{curl http://\\ptest3/secret.txt}}.
+Port \textit{http} bol ale otvorený. Vyskúšal som, zda sa si ten súbor neviem stiahnuť pomocou \uv{\texttt{curl http://\\ptest3/secret.txt}}. Súbor sa mi podarilo stiahnuť a následne odhaliť tajomstvo \textit{C}.
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}}
@@ -192,7 +192,7 @@ qeb fkqbiifdbkzblc x cbt mbozbfsbp texq exp ybbk zxobcriiv efaabk.<|
 \end{tabular}
 \end{center}
 
-Zistil som, že sa jedná o Caesarovu šifru s pousnutím o 23. Dekódovaná správa vyzerala následovne:
+Zistil som, že sa jedná o Caesarovu šifru s pousnutím o 23. Dekódovaná správa vyzerala nasledovne:
 
 \begin{center}
 \begin{tabular}{c}
@@ -214,7 +214,7 @@ Po vykonaní príkazu \uv{\texttt{riddle essentialities}} som získal tajomstvo 
 
 \section{Tajomstvo \textit{F}}\label{sec:F}
 
-Všimol som si po analýze siete ktorá je popísaná v kapitole \ref{sec:analysis}, že na \textit{ptest4} beží \texttt{irc} na porte \texttt{6667}. Spustil som si IRC client pomocou \uv{\texttt{irssi}} a následne som sa napojil na \textit{ptest4} pomocou \uv{\texttt{/connect ptest4}}. Vypísal som si zoznam kanálov (channels) pomocou \uv{\texttt{/list}}.
+Všimol som si po analýze siete, ktorá je popísaná v kapitole \ref{sec:analysis}, že na \textit{ptest4} beží \texttt{irc} na porte \texttt{6667}. Spustil som si IRC client pomocou \uv{\texttt{irssi}} a následne som sa napojil na \textit{ptest4} pomocou \uv{\texttt{/connect ptest4}}. Vypísal som si zoznam kanálov (channels) pomocou \uv{\texttt{/list}}.
 
 \begin{center}
 \begin{tabular}{c}
@@ -316,7 +316,7 @@ V správe som získal tajomstvo \textit{F}.
 
 \section{Tajomstvo \textit{D}}\label{sec:D}
 
-Keďže na \textit{ptest4} je otvorený port 53, vyskúšal som dotazovanie nie skutočného DNS servera - 192.168.122.1, ale DNS servera \textit{ptest4} - \texttt{192.168.122.210} pomocou \texttt{dig}. Pomocou príkazu \uv{\texttt{dig @192.168.122.210 ptest4.bis.mil. ANY}} som zistil NS záznam pre \texttt{ptest4.bis.mil} t.j. \texttt{bis.mil.} bol NS pre \texttt{ptest4.bis.mil}. Následne som znovu poslal dotaz na \textit{ptest4} pomocou \uv{\texttt{dig @192.168.122.210 bis.mil ANY}}. Odhalil som, že tajomstvo sa nachádza v TXT zázname. Poslal som dotaz \uv{\texttt{dig @192.168.122.210 bis.mil TXT}} ktorý mi vypísal tajomstvo \textit{D}.
+Keďže na \textit{ptest4} je otvorený port 53, vyskúšal som dotazovanie nie skutočného DNS servera - 192.168.122.1, ale DNS servera \textit{ptest4} - \texttt{192.168.122.210} pomocou \texttt{dig}. Pomocou príkazu \uv{\texttt{dig @192.168.122.210 ptest4.bis.mil. ANY}} som zistil NS záznam pre \texttt{ptest4.bis.mil} ktorým bol \texttt{bis.mil.}. Následne som znovu poslal dotaz na \textit{ptest4} pomocou \uv{\texttt{dig @192.168.122.210 bis.mil ANY}}. Odhalil som, že tajomstvo sa nachádza v TXT zázname. Poslal som dotaz \uv{\texttt{dig @192.168.122.210 bis.mil TXT}} ktorý mi vypísal tajomstvo \textit{D}.
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}}
@@ -324,7 +324,7 @@ Keďže na \textit{ptest4} je otvorený port 53, vyskúšal som dotazovanie nie 
 
 \section{Tajomstvo \textit{G}}\label{sec:G}
 
-Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez správneho prihlasovacieho mena a hesla ma to nechcelo pripojiť. FTP server ale obsahoval backdoor, ktorý fungoval tak, že som musel do prihlasovacieho mena vložiť podreťazec \uv{\textit{:)}} reprezentujúci smajlík a náhodné heslo. Výsledkom bola odpoveď \uv{\texttt{220 Opened port 50331, take a look ;)}} ktorú som využil tak, že som sa znovu pripojil pomocou príkazu \uv{\texttt{ftp 192.168.122.143 56530}}. Odhalil som tajomstvo \textit{G}.
+Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez správneho prihlasovacieho mena a hesla ale nechcelo ma to pripojiť. FTP server ale obsahoval backdoor, ktorý fungoval tak, že som musel do prihlasovacieho mena vložiť podreťazec \uv{\textit{:)}} reprezentujúci smajlík a náhodné heslo. Výsledkom bola odpoveď \uv{\texttt{220 Opened port 50331, take a look ;)}} ktorú som využil tak, že som sa znovu pripojil pomocou príkazu \uv{\texttt{ftp 192.168.122.143 56530}}. Odhalil som tajomstvo \textit{G}.
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}}
@@ -362,7 +362,7 @@ define('DB_DATABASE', 'arcturus');
 \end{tabular}
 \end{center}
 
- Pripojil som sa do databázy pomocou \uv{\texttt{mysql -u arcturus -p16431879196842}}. Zanalyzoval som obsah databázy príkazmy \uv{\texttt{use <DB>;}} a \uv{\texttt{select * from <table>}}. Databáza \texttt{arcturus} obsahovala tabuľku \texttt{contracts} ktorá obsahovala tajomstvo \textit{J}.
+ Pripojil som sa do databázy pomocou \uv{\texttt{mysql -u arcturus -p16431879196842}}. Zanalyzoval som obsah databázy príkazmi \uv{\texttt{use <DB>;}} a \uv{\texttt{select * from <table>}}. Databáza \texttt{arcturus} obsahovala tabuľku \texttt{contracts} ktorá obsahovala tajomstvo \textit{J}.
 
 \begin{center}
 \small{\texttt{J\_20-11-22-38-01\_2a87a2c2ad810dfd8d839eae1216c65732cb84a896b730c4ed77c3be966f790f}}
@@ -371,7 +371,7 @@ define('DB_DATABASE', 'arcturus');
 
 \section{Tajomstvo \textit{B}}\label{sec:B}
 
-Pokračovaním analýzi prečinka \texttt{/var/www/html} na \textit{ptest2} (pripojenie na \textit{ptest2} je popísané v kapitole \ref{sec:J}) som odhalil implementačnú zraniteľnosť.
+Pokračovaním analýzou prečinka \texttt{/var/www/html} na \textit{ptest2} (pripojenie na \textit{ptest2} je popísané v kapitole \ref{sec:J}) som odhalil implementačnú zraniteľnosť.
 Pomocou príkazu \uv{\texttt{cat index.php}} som odhalil zraniteľnosť v zdrojovom kóde:
 
 \begin{center}
@@ -398,7 +398,7 @@ Na základe tejto zraniteľnosti ktorá bola dokonca i popísaná som sa snažil
 \end{tabular}
 \end{center}
 
-Teraz som potreboval preniesť túto premennú do odhaleného zranitelného miesta. Dotaz \uv{\texttt{curl http://\\ptest2/index.php}} nefungoval, ale po správnom dotaze pomocou \uv{\texttt{curl http://ptest2/index.php?\\debug\_variable=INTERNAL\_MSG}} som si premennú ypísal:
+Teraz som potreboval preniesť túto premennú do odhaleného zranitelného miesta. Dotaz \uv{\texttt{curl http://\\ptest2/index.php}} nefungoval, ale po správnom dotaze pomocou \uv{\texttt{curl http://ptest2/index.php?\\debug\_variable=INTERNAL\_MSG}} som si premennú vypísal:
 
 \begin{center}
 \begin{tabular}{c}
