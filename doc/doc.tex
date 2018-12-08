@@ -82,26 +82,28 @@ Cieľom projektu bolo uskutočniť APT útok na zadaný server. Výsledok útoku
 
 \section{Tajomstvá}
 
-\begin{tabular}{r|l}
-    Kapitola \ref{sec:A} & \footnotesize{\texttt{A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}} \\
-    Kapitola \ref{sec:B} & \footnotesize{\texttt{B\_21-11-22-59-01\_fd5e5384449c8f7210aeae754d02913a70e3b0cc52e933ab18dec768a6c346b0}} \\
-    Kapitola \ref{sec:C} & \footnotesize{\texttt{C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}} \\
-    Kapitola \ref{sec:D} & \footnotesize{\texttt{D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}} \\
-    Kapitola \ref{sec:E} & \footnotesize{\texttt{E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}} \\
-    Kapitola \ref{sec:F} & \footnotesize{\texttt{F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}} \\
-    Kapitola \ref{sec:G} & \footnotesize{\texttt{G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}} \\
-    Kapitola \ref{sec:H} & \footnotesize{\texttt{H\_20-11-21-32-01\_e611160adcc74100c8739ad2525739abda3bdc39e471efdb5b27a01a32d0c32c}} \\
-    Kapitola \ref{sec:I} & \footnotesize{\texttt{I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}} \\
-    Kapitola \ref{sec:J} & \footnotesize{\texttt{J\_20-11-22-38-01\_2a87a2c2ad810dfd8d839eae1216c65732cb84a896b730c4ed77c3be966f790f}} \\
-\end{tabular}
+Podarilo sa mi odhaliť nasledujúcich 10 tajomstiev.
 
-\hfill\\
+\begin{center}
+    \begin{tabular}{r|l}
+        Kapitola \ref{sec:A} & \footnotesize{\texttt{A\_20-11-16-10-01\_2808ed0cf1d2ad2024a572ae6075f14cbe9c4e5103493dc088cf846d0ffa9f0d}} \\
+        Kapitola \ref{sec:B} & \footnotesize{\texttt{B\_21-11-22-59-01\_fd5e5384449c8f7210aeae754d02913a70e3b0cc52e933ab18dec768a6c346b0}} \\
+        Kapitola \ref{sec:C} & \footnotesize{\texttt{C\_17-11-19-41-01\_47533bc4b523ba4f7d0ebef3d25fe654f5ec126bc6a161394b027f4355ed6f64}} \\
+        Kapitola \ref{sec:D} & \footnotesize{\texttt{D\_20-11-14-50-01\_167443c9a637757e4f3a88a71d43db93a5a7a53bdb449958ff4d91a8ee87b034}} \\
+        Kapitola \ref{sec:E} & \footnotesize{\texttt{E\_17-11-20-44-01\_6454d0f7031b689cccb1bedf8de6f6c0b904eeaa810d7aef98bab5cba308fafe}} \\
+        Kapitola \ref{sec:F} & \footnotesize{\texttt{F\_18-11-22-13-01\_2d04f2e14d44efadf60e1921b8902d2648c65dfe364dbc0cb23da17d4008cf62}} \\
+        Kapitola \ref{sec:G} & \footnotesize{\texttt{G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}} \\
+        Kapitola \ref{sec:H} & \footnotesize{\texttt{H\_20-11-21-32-01\_e611160adcc74100c8739ad2525739abda3bdc39e471efdb5b27a01a32d0c32c}} \\
+        Kapitola \ref{sec:I} & \footnotesize{\texttt{I\_17-11-20-14-01\_adb2020a691f94c4a2b0f3ea1b16c21936567ee6b07f5a3308959c47a1b19abe}} \\
+        Kapitola \ref{sec:J} & \footnotesize{\texttt{J\_20-11-22-38-01\_2a87a2c2ad810dfd8d839eae1216c65732cb84a896b730c4ed77c3be966f790f}} \\
+    \end{tabular}
+\end{center}
 
-Jednotlivé kapitoly popisujúce odhalené tajomstvá sú usporiadané do kapitol na základe poradia odhalenia jednotlivých tajomstiev.
+Jednotlivé kapitoly popisujúce odhalené tajomstvá sú usporiadané na základe poradia odhalenia jednotlivých tajomstiev.
 
 \section{Analýza}\label{sec:analysis}
 
-Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr prezrel \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Odhalil som v priečinku \texttt{.Trash} privátny kľúč používateľa \textit{itcrowd}. Následne na to, som si zistil IP adresu zariadenia pomocou \uv{\texttt{ip addr}}. IP adresa zariadenia: \texttt{192.168.122.6}, maska siete: \texttt{255.255.255.0}. Zanalyzoval som si sieť v ktorej sa nachádza toto zariadenie pomocou \uv{\texttt{nmap 192.168.122.6/24 -Pn}}. Vo výstupe som spozoroval \textit{ptest}, tak na základe tohto, som spustil príkaz \uv{\texttt{nmap 192.168.122.6/24 -Pn | grep -A 6 "ptest"}}. Získal som nasledujúci výsledok:
+Po pripojení na \textit{bis.fit.vutbr.cz} som si najskôr preskúmal \texttt{\$HOME} pomocou \uv{\texttt{ls -R -A \$HOME}}. Odhalil som v priečinku \texttt{.Trash} privátny kľúč používateľa \textit{itcrowd} a štyri dokumenty. Následne na to, som si zistil IP adresu zariadenia pomocou \uv{\texttt{ip addr}}. IP adresa zariadenia: \texttt{192.168.122.6}, maska siete: \texttt{255.255.255.0}. Zanalyzoval som si sieť v ktorej sa nachádza toto zariadenie pomocou \uv{\texttt{nmap 192.168.122.6/24 -Pn}}. Vo výstupe som spozoroval \textit{ptest}, tak na základe tohto, som spustil príkaz \uv{\texttt{nmap 192.168.122.6/24 -Pn | grep -A 6 "ptest"}}. Získal som nasledujúci výsledok:
 
 \begin{center}
 \begin{tabular}{c}
@@ -324,7 +326,7 @@ Keďže na \textit{ptest4} je otvorený port 53, vyskúšal som dotazovanie nie 
 
 \section{Tajomstvo \textit{G}}\label{sec:G}
 
-Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez správneho prihlasovacieho mena a hesla ale nechcelo ma to pripojiť. FTP server ale obsahoval backdoor, ktorý fungoval tak, že som musel do prihlasovacieho mena vložiť podreťazec \uv{\textit{:)}} reprezentujúci smajlík a náhodné heslo. Výsledkom bola odpoveď \uv{\texttt{220 Opened port 50331, take a look ;)}} ktorú som využil tak, že som sa znovu pripojil pomocou príkazu \uv{\texttt{ftp 192.168.122.143 56530}}. Odhalil som tajomstvo \textit{G}.
+Na \textit{ptest1} bol otvorený FTP port. Vyskúšal som sa pripojiť ale bez správneho prihlasovacieho mena a hesla ale nechcelo ma to pripojiť. Pred autentifikačným procesom mi ale FTP server odoslal informáciu o sebe \texttt{vsFTPd 2.3.4}. Na základe verzie som si vyhľadal zraniteľnosti ktoré som vyskúšal. FTP server obsahoval backdoor, ktorý fungoval tak, že som musel do prihlasovacieho mena vložiť podreťazec \uv{\textit{:)}} reprezentujúci smajlík a náhodné heslo. Výsledkom bola odpoveď \uv{\texttt{220 Opened port 50331, take a look ;)}} ktorú som využil tak, že som sa znovu pripojil pomocou príkazu \uv{\texttt{ftp 192.168.122.143 56530}}. Odhalil som tajomstvo \textit{G}.
 
 \begin{center}
 \small{\texttt{Ziskali jste tajemstvi G\_20-11-15-40-01\_33582fcbcfaf70b70a85dd974c6831aad199fc150b7cc77c2fefaf59e87f9e4e}}
